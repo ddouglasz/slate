@@ -2,9 +2,6 @@
 title: API Reference
 
 language_tabs: # must be one of https://git.io/vQNgJ
-  - shell
-  - ruby
-  - python
   - javascript
 
 toc_footers:
@@ -16,224 +13,451 @@ includes:
 
 search: true
 ---
+# WELCOME TO WEConnect
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
+Welcome to the WEConnect API!
+WeConnect provides a platform that brings businesses and individuals together. This platform creates awareness for businesses and gives the users the ability to write reviews about the businesses they have interacted with.
 
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
+You can use our API to access to acces different businesses. We get You connected to multiple businesses, their reviews and profiles. Our API also allows You to add a business to the platform too.
 
-This example API documentation page was created with [Slate](https://github.com/lord/slate). Feel free to edit it and use it as a base for your own API's documentation.
+Our language of choice here is node and express was used for the routing. You can view code examples in the dark area to the right, and you can switch the programming language oto javascript with the tabs in the top right.
+
+# Development
+This application was built with <a href="https://nodejs.org/en/">node</a> and <a href="https://expressjs.com/en/guide/routing.html">express</a> as the router.
+
+# Installation
+* Ensure to have nodeJs and postgreSQL installed
+* Clone the Repository github.com/ddouglasz/We-connect
+* Switch to the directory: `cd WEConnect`
+* Install all dependencies `npm install`
+* Start the app using `npm start` for development
+* Use postman to consume the API
 
 # Authentication
 
-> To authorize, use this code:
+The WEConnect API uses a login criteria (username and password) to log in and provide acces to routes that require authentication and permission(protected routes). The Api is designed to create a session once logged in. This is possible due to the token generated to secure user sign details. upon failure of generating this token, the user is regarded as unauthorized and as such no privileges are granted for the user to acces authenticated/protected routes.
 
-```ruby
-require 'kittn'
+# API requests
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
+## API endpoints and functions
 
-```python
-import kittn
+ 
 
-api = kittn.authorize('meowmeowmeow')
-```
+Type of request | route(endpoint)       | Description
+----------------| ----------| --------------------
+POST   |api/v1/auth/signup|create a new user
+POST   |api/v1/auth/signin|login existing user
+POST   |/api/v1/businesses|create a new business
+GET    |/api/v1/businesses|get all businesses
+DELETE | /api/v1/businesses/:businessId |delete a particular business
+GET    |/api/v1/businesses/:businessId| to retrieve a particular business using its businessId
+PUT    |/api/v1/business/:businessId  | to update a particular business using its businessId
+POST   |/api/v1/business/:businessId/reviews| to post a review for a given business using its businessId
+GET    |/api/v1/business/:businessId/reviews| to get reviews of a particular business using its businessId
+GET    |/api/v1/businesses?location=keyword| get businesses based on key word (serach query)
+GET    |/api/v1/businesses?category=keyword| get businesses based on key word (serach query).
 
-```shell
-# With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
-```
+#Users
+
+##sign Up a User
+
+**request**
+
+* Endpoint: Post: `/api/v1/auth/signup`
+* Body `(application/json)`
+
+
+**Response**
+
+* status: `201 created`
+* Body `(application/json)`
+
+
 
 ```javascript
-const kittn = require('kittn');
+ 
+request:
 
-let api = kittn.authorize('meowmeowmeow');
+{
+  "userId": 1,
+  "fullname": "pascal pascal",
+  "username": "pascal11",
+  "password": "passpass",
+  "email": "pas@cal.com"
+},
+
+
+```
+ 
+<aside class="notice">
+ x-access-token must be generated to access protected routes. This should be included in the header or body.
+</aside>
+
+```javascript
+response:
+
+{
+  "message": "user registered successfully",
+  "token": "jhgjjgvghccrt4765r876tyuutuytdy65476lkn_kjbjhbhuyh.ghgcvhgcgchgfcfghfcgfdteMNhkjbkhj.hjVBzgdxgfdsjgfgf574xcgfxgd"
+}
+
 ```
 
-> Make sure to replace `meowmeowmeow` with your API key.
+##sign in a User
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
+**request**
 
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
+* Endpoint: Post: `/api/v1/auth/signin`
+* Body `(application/json)`
 
-`Authorization: meowmeowmeow`
+
+**Response**
+
+* status: `200 ok`
+* Body `(application/json)`
+
+
+
+```javascript
+ 
+request:
+
+{
+  "username": "pascal11",
+  "password": "passpass",
+},
+
+
+```
+ 
+<aside class="notice">
+ token must be set to access protected routes. This should be included in the header or body(where you have x-access-token to be token).
+</aside>
+
+```javascript
+response:
+
+{
+  "message": "user signed in successfully",
+  "token": "jhgjjgvghccrt4765r876tyuutuytdy65476lkn_kjbjhbhuyh.ghgcvhgcgchgfcfghfcgfdteMNhkjbkhj.hjVBzgdxgfdsjgfgf574xcgfxgd"
+}
+
+```
+
+
+# Businesses
+
+## Get All Businesses
+
+**request**
+
+* Endpoint: Get:`/api/v1/businesses`
+* Body `(application/json)`
+
+
+**Response**
+
+* status: `200 ok`
+* Body `(application/json)`
+
+
+
+```javascript
+response:
+
+"status": "success",
+"Businesses":[{
+  "id": "1",
+  "name": "andela",
+  "mage": "andela.jpg",
+  "description": "a software development company changing the face of africa",
+  "category": "ICT",
+  "locatio": "lagos",
+  "email": "andela@andela.com",
+},
+{
+  "id": "2",
+  "name": "irokotv",
+  "image": "oroko.jpg",
+  "description": "online and offline entertainment business",
+  "category": "entertainment",
+  "location": "portharcourt",
+  "email": "iroko@iroko.com",
+},
+{
+  "id": "3",
+  "name": "farm crowdy",
+  "image": "farmcrowdy.jpg",
+  "description": "connects farm owners with investors on farm produce to share profits",
+  "category": "farming",
+  "location": "kaduna",
+  "email": "farmcrowdy@farmcrowdy.com",
+}
+];
+
+```
+
+## Get One Business
+
+**request**
+
+* Endpoint: Get:`/api/v1/business/2`
+* Body `(application/json)`
+
+
+**Response**
+
+* status: `200 ok`
+* Body `(application/json)`
+
+
+```javascript
+
+response:
+
+"status": "success",
+"Business":[{
+   "id": "2",
+  "name": "irokotv",
+  "image": "oroko.jpg",
+  "description": "online and offline entertainment business",
+  "category": "entertainment",
+  "location": "portharcourt",
+  "email": "iroko@iroko.com",
+},
+ ];
+```
+
+##Post a new Business
+
+**request**
+
+* Endpoint:Post: `/api/v1/business/`
+* Body `(application/json)`
+
+
+**Response**
+
+* status: `201 created`
+* Body `(application/json)`
+
+```javascript
+
+request:
+
+{
+   "id": "2",
+  "name": "phazecloud.ng",
+  "image": "phazecloud.jpg",
+  "description": "home automations business",
+  "category": "technology/ICT",
+  "location": "abuja",
+  "email": "phaze@cloud.com",
+},
+
+```
+ <aside class="notice">
+NOTE: to post, token is needed to create an authenticated session  for a user.
+</aside>
+
+```javascript
+
+response:
+
+{
+"message":"businesses successfully registered"
+{
+   "id": "2",
+  "name": "phazecloud.ng",
+  "image": "phazecloud.jpg",
+  "description": "home automations business",
+  "category": "technology/ICT",
+  "location": "abuja",
+  "email": "phaze@cloud.com",
+  }
+}
+
+``` 
+##Delete a new Business
+
+**request**
+
+* Endpoint: Delete:`/api/v1/business/2`
+* Body `(application/json)`
+
+
+**Response**
+
+* status: `200 ok`
+* Body `(application/json)`
+
+```javascript
+
+response:
+
+{
+   "Message":"Business succesfully deleted"
+},
+
+```
+ 
+<aside class="notice">
+NOTE: to post, token is needed to create an authenticated session  for a user. specify business id of the business to be deleted in the params. 
+</aside>
+ 
+
+ ##Edit a Business
+
+**request**
+
+* Endpoint: Put: `/api/v1/business/1`
+* Body `(application/json)`
+
+
+**Response**
+
+* status: `200 ok`
+* Body `(application/json)`
+
+```javascript
+
+request:
+
+{
+  {"message":"you have successfully updated the business"
+   "id": "2",
+  "name": "phazecloud.ng",
+  "image": "phazecloud.jpg",
+  "description": "home automations business",
+  "category": "technology/ICT",
+  "location": "abuja",
+  "email": "phaze@cloud.com",
+ }
+}
+
+```
+ 
+
+ 
+##Get all businesses Using a key word(search query=location)
+
+**request**
+
+* Endpoint:Post: Get:`/api/v1/business?location=abuja`
+* Body `(application/json)`
+
+
+**Response**
+
+* status: `200 ok`
+* Body `(application/json)`
 
 <aside class="notice">
-You must replace <code>meowmeowmeow</code> with your personal API key.
+NOTE: to post, token is needed to create an authenticated session  for a user. Enter the search key word you want to to get all businesses with similar key word(in this case, a location) in one of their params.
+given that we enter a query string location of "lagos". we are expected to have a response as seen below with all businesses in abuja from the database.
 </aside>
 
-# Kittens
+```javascript
 
-## Get All Kittens
+response:
 
-```ruby
-require 'kittn'
+{
+   "id": "2",
+  "name": "phazecloud.ng",
+  "image": "phazecloud.jpg",
+  "description": "home automations business",
+  "category": "technology/ICT",
+  "location": "abuja",
+  "email": "phaze@cloud.com",
+},
 
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
 ```
+ 
 
-```python
-import kittn
+  
+#Reviews
+##Post a new review to a Business
 
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+**request**
 
-```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
-```
+* Endpoint:Post: `/api/v1/business/reviews/:businessId`
+* Body `(application/json)`
+
+
+**Response**
+
+* status: `201 created`
+* Body `(application/json)`
+
+<aside class="notice">
+NOTE: to post, token is needed to create an authenticated session  for a user. user has to be signed in to post a review.
+</aside>
 
 ```javascript
-const kittn = require('kittn');
 
-let api = kittn.authorize('meowmeowmeow');
-let kittens = api.kittens.get();
+request:
+
+
+   {
+  "id": 4,
+   "review": "truly built on excellence",
+}
+
+response:
+
+{
+"message":"businesses review successfully added"
+   {
+  "id": 4,
+  "reviewedBy": "pascal",
+  "review": "truly built on excellence",
+}
+}
 ```
 
-> The above command returns JSON structured like this:
+## Get All Reviews for a given business
 
-```json
-[
-  {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
-  },
-  {
-    "id": 2,
-    "name": "Max",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
-  }
+**request**
+
+* Endpoint: Get:`/api/v1/businesses/busunessId/reviews`
+* Body `(application/json)`
+
+
+**Response**
+
+* status: `200 ok`
+* Body `(application/json)`
+
+
+
+```javascript
+response:
+
+"status": "successful",
+"Business": "andela nigeria"
+ "reviews": [{
+  "id": 1,
+  "reviewedBy": "clinton",
+  "review": "so much verve and gusto!",
+},
+{
+  "id": 2,
+  "reviewedBy": "longe",
+  "review": "so much zeal",
+},
+{
+  "id": 3,
+  "reviewedBy": "seun",
+  "review": "great speed of delivery",
+},
+{
+  id: 4,
+  "reviewedBy": "pascal",
+  "review": "truly built on excellence",
+},
 ]
+
 ```
-
-This endpoint retrieves all kittens.
-
-### HTTP Request
-
-`GET http://example.com/api/kittens`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
-
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.get(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "name": "Max",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
-}
-```
-
-This endpoint retrieves a specific kitten.
-
-<aside class="warning">Inside HTML code blocks like this one, you can't use Markdown, so use <code>&lt;code&gt;</code> blocks to denote code.</aside>
-
-### HTTP Request
-
-`GET http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to retrieve
-
-## Delete a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.delete(2)
-```
-
-```shell
-curl "http://example.com/api/kittens/2"
-  -X DELETE
-  -H "Authorization: meowmeowmeow"
-```
-
-```javascript
-const kittn = require('kittn');
-
-let api = kittn.authorize('meowmeowmeow');
-let max = api.kittens.delete(2);
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "id": 2,
-  "deleted" : ":("
-}
-```
-
-This endpoint deletes a specific kitten.
-
-### HTTP Request
-
-`DELETE http://example.com/kittens/<ID>`
-
-### URL Parameters
-
-Parameter | Description
---------- | -----------
-ID | The ID of the kitten to delete
 
