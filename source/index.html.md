@@ -48,7 +48,7 @@ The WEConnect API uses a login criteria (username and password) to log in and pr
 Type of request | route(endpoint)       | Description
 ----------------| ----------| --------------------
 POST   |api/v1/auth/signup|create a new user
-POST   |api/v1/auth/signin|login existing user
+POST   |api/v1/auth/login|login existing user
 POST   |/api/v1/businesses|create a new business
 GET    |/api/v1/businesses|get all businesses
 DELETE | /api/v1/businesses/:businessId |delete a particular business
